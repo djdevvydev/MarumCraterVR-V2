@@ -80,9 +80,7 @@ public class SightControl : MonoBehaviour
                             SceneManager.instance.audioManager.audioClipIndex += 1;
                         }
                         SceneManager.instance.audioManager.vrAudioSource.Play();
-//                        Debug.Log("Play TRAIL audio clip");
                     }
-//                    Debug.Log("Direction = " + pathDefScript.pathDirection);
             
                     break;
                 case InteractableInfo.InteractableType.MenuItemStart:
@@ -104,8 +102,11 @@ public class SightControl : MonoBehaviour
 	    if(scanning)
         {
             RaycastHit hit;
-            //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 10, Color.green);
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit)) //Gear/Tango version
+
+            Vector3 rayDirection = Camera.main.transform.TransformDirection(Vector3.forward);
+            Vector3 rayStart = Camera.main.transform.position + rayDirection;
+            Debug.DrawRay(rayStart, rayDirection * 100, Color.green);
+            if (Physics.Raycast(rayStart, rayDirection * 100, out hit)) //Gear/Tango version
             {
                 currentTarget = hit.collider.gameObject;
                 if(currentTarget != lastTarget) //Looking at something new...
