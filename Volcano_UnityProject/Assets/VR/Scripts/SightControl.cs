@@ -11,9 +11,7 @@ public class SightControl : MonoBehaviour
     public GameObject tangoManager;
 
     [SerializeField]
-    Image gazeTimerImage;
-    [SerializeField]
-    Image targetReticleImage;
+    GameObject cursor;
 
     [SerializeField]
     CameraFollowPath camFollowPathScript;
@@ -36,7 +34,7 @@ public class SightControl : MonoBehaviour
         if (lookTimer >= lookTimerMax) //If looktimer is >= 1, we mean to select this object
         {
             scanning = false;
-            gazeTimerImage.fillAmount = 0;
+            //gazeTimerImage.fillAmount = 0;
             lookTimer = 0;
 
             //Check which type of interactable our target is
@@ -59,6 +57,8 @@ public class SightControl : MonoBehaviour
                     pathDefScript.pathDirection = targetPathPoint > camFollowPathScript.targetPathPoint ? 1 : -1;
                     camFollowPathScript.speed = currentTarget.GetComponent<TrailPoint>().travelSpeed; //Set the travelSpeed based on the trail point
                     camFollowPathScript.targetPathPoint = targetPathPoint; //Tell the camera the target path point we want to hit
+
+                    //cursor.SetActive(false);
 
                     camFollowPathScript.cameraMoveAlongPath = true; //Start moving
 
@@ -109,13 +109,19 @@ public class SightControl : MonoBehaviour
 
             Vector3 rayDirection = Camera.main.transform.TransformDirection(Vector3.forward);
             Vector3 rayStart = Camera.main.transform.position;
-            //Debug.DrawRay(rayStart, rayDirection * 100, Color.green);
+            Debug.DrawRay(rayStart, rayDirection * 100, Color.green);
             if (Physics.Raycast(rayStart, rayDirection, out hit)) //Gear/Tango version
             //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward), Color.blue  );
             //if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 1000.0F))
             {
-                //Debug.Log("Hit: " + hit.collider.name);
+
+                //Debug.Log("Turn on cursor");
+                cursor.SetActive(true);
+                float dist = hit.distance + 0.1F;
+                cursor.transform.position = Camera.main.transform.position + Camera.main.transform.forward * dist;
+
                 currentTarget = hit.collider.gameObject;
+                
                 if(currentTarget != lastTarget) //Looking at something new...
                 {
                     if(lastTarget != null)
@@ -130,31 +136,35 @@ public class SightControl : MonoBehaviour
                     {
                         lookTimer += Time.deltaTime; //Increment lookTimer
                         //Fill the target reticle image on the canvas by % based on lookTimer
-                        gazeTimerImage.fillAmount += Time.deltaTime / lookTimerMax;
+                        //gazeTimerImage.fillAmount += Time.deltaTime / lookTimerMax;
                         //Debug.Log("Looktimer = " + lookTimer);
                     }
                     else
                     {
+                        cursor.SetActive(false);
+                        //Debug.Log("Turn off cursor1");
                         if (lookTimer > 0) 
                         { 
                             lookTimer -= Time.deltaTime; 
                         }
-                        if (gazeTimerImage.fillAmount > 0) 
+                        //if (gazeTimerImage.fillAmount > 0) 
                         { 
-                            gazeTimerImage.fillAmount -= Time.deltaTime / lookTimerMax; 
+                            //gazeTimerImage.fillAmount -= Time.deltaTime / lookTimerMax; 
                         }
                     }
                 }
             }
             else
             {
+                Debug.Log("Turn off cursor2");
+                cursor.SetActive(false);
                 if (lookTimer > 0)
                 {
                     lookTimer -= Time.deltaTime;
                 }
-                if (gazeTimerImage.fillAmount > 0)
+                //if (gazeTimerImage.fillAmount > 0)
                 {
-                    gazeTimerImage.fillAmount -= Time.deltaTime / lookTimerMax;
+                    //gazeTimerImage.fillAmount -= Time.deltaTime / lookTimerMax;
                 }
             }
         }

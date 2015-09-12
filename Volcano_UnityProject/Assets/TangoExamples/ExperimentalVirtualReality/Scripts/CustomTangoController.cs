@@ -146,7 +146,14 @@ public class CustomTangoController : MonoBehaviour , ITangoPose
         Quaternion prevRot = new Quaternion();
         
         ComputeTransformUsingPose(out currPos, out currRot, currPose);
-        ComputeTransformUsingPose(out prevPos, out prevRot, prevPose);
+        if(GetComponent<CameraFollowPath>().cameraMoveAlongPath)
+        {
+            ComputeTransformUsingPose(out prevPos, out prevRot, prevPose);
+        }
+        else
+        {
+            ComputeTransformUsingPose(out currPos, out currRot, currPose);
+        }
         
         //hack for rotation, should be a slerp
         transform.rotation = m_startRotation*(new Quaternion(dt*(currRot[0] - prevRot[0])+prevRot[0],

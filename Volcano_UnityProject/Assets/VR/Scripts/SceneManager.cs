@@ -31,6 +31,7 @@ public class SceneManager : MonoBehaviour
             //If this object is not the singleton of "instance", destroy yourself
             Destroy(gameObject);
         }
+
         if(fadeOverlay == null)
         {
             fadeOverlay = GameObject.Find("FadePanel").GetComponent<Image>();

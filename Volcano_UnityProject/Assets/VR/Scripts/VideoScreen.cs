@@ -51,7 +51,7 @@ public class VideoScreen : MonoBehaviour {
     IEnumerator FadeIn()
     {
         //int scaleFactor = 100;
-        Debug.Log("transform.localScale = " + transform.localScale);
+        //Debug.Log("transform.localScale = " + transform.localScale);
         float counter = 0.0F;
         while (counter < 1.0F)
         {
