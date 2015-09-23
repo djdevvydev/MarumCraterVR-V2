@@ -128,7 +128,7 @@ public class SightControl : MonoBehaviour
                 cursor.SetActive(true);
                 float dist = hit.distance + 0.1F;
                 cursor.transform.position = Camera.main.transform.position + Camera.main.transform.forward * dist;
-                cursor.transform.localScale = cursorBaseScale * (dist/10);
+                cursor.transform.localScale = cursorBaseScale * (dist/15);
                 
                 currentTarget = hit.collider.gameObject;
                 
