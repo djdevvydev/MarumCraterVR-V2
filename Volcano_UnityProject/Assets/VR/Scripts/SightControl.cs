@@ -10,8 +10,8 @@ public class SightControl : MonoBehaviour
    
     public GameObject tangoManager;
 
-    [SerializeField]
-    GameObject cursor;
+    public GameObject cursor;
+    Vector3 cursorBaseScale;
 
     [SerializeField]
     CameraFollowPath camFollowPathScript;
@@ -28,13 +28,22 @@ public class SightControl : MonoBehaviour
     [SerializeField]
     float lookTimerMax = 2.0F;
 
+    [SerializeField]
+    Image gazeTimerImage;
+
+
+    void Start()
+    {
+        cursorBaseScale = cursor.transform.localScale;
+    }
+
 	// Update is called once per frame
 	void Update () 
     {
         if (lookTimer >= lookTimerMax) //If looktimer is >= 1, we mean to select this object
         {
             scanning = false;
-            //gazeTimerImage.fillAmount = 0;
+            gazeTimerImage.fillAmount = 0;
             lookTimer = 0;
 
             //Check which type of interactable our target is
@@ -85,7 +94,7 @@ public class SightControl : MonoBehaviour
                         }
                         SceneManager.instance.audioManager.vrAudioSource.Play();
                     }
-            
+                    cursor.SetActive(false);
                     break;
                 case InteractableInfo.InteractableType.MenuItemStart:
                     //Debug.Log("MenuItemStart");
@@ -114,12 +123,13 @@ public class SightControl : MonoBehaviour
             //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward), Color.blue  );
             //if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 1000.0F))
             {
-
-                //Debug.Log("Turn on cursor");
+                
+                Debug.Log("Hit: " + hit.collider.name);
                 cursor.SetActive(true);
                 float dist = hit.distance + 0.1F;
                 cursor.transform.position = Camera.main.transform.position + Camera.main.transform.forward * dist;
-
+                cursor.transform.localScale = cursorBaseScale * (dist/10);
+                
                 currentTarget = hit.collider.gameObject;
                 
                 if(currentTarget != lastTarget) //Looking at something new...
@@ -136,7 +146,7 @@ public class SightControl : MonoBehaviour
                     {
                         lookTimer += Time.deltaTime; //Increment lookTimer
                         //Fill the target reticle image on the canvas by % based on lookTimer
-                        //gazeTimerImage.fillAmount += Time.deltaTime / lookTimerMax;
+                        gazeTimerImage.fillAmount += Time.deltaTime / lookTimerMax;
                         //Debug.Log("Looktimer = " + lookTimer);
                     }
                     else
@@ -147,24 +157,24 @@ public class SightControl : MonoBehaviour
                         { 
                             lookTimer -= Time.deltaTime; 
                         }
-                        //if (gazeTimerImage.fillAmount > 0) 
+                        if (gazeTimerImage.fillAmount > 0) 
                         { 
-                            //gazeTimerImage.fillAmount -= Time.deltaTime / lookTimerMax; 
+                            gazeTimerImage.fillAmount -= Time.deltaTime / lookTimerMax; 
                         }
                     }
                 }
             }
             else
             {
-                Debug.Log("Turn off cursor2");
+                //Debug.Log("Turn off cursor2");
                 cursor.SetActive(false);
                 if (lookTimer > 0)
                 {
                     lookTimer -= Time.deltaTime;
                 }
-                //if (gazeTimerImage.fillAmount > 0)
+                if (gazeTimerImage.fillAmount > 0)
                 {
-                    //gazeTimerImage.fillAmount -= Time.deltaTime / lookTimerMax;
+                    gazeTimerImage.fillAmount -= Time.deltaTime / lookTimerMax;
                 }
             }
         }

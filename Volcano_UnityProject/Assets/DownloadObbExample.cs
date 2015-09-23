@@ -25,10 +25,7 @@ public class DownloadObbExample : MonoBehaviour {
 			GUI.Label(new Rect(10, 25, Screen.width-10, 20), "Patch = ..." + (patchPath == null ? " NOT AVAILABLE" : patchPath.Substring(expPath.Length)));
 			if (mainPath == null || patchPath == null)
 				if (GUI.Button(new Rect(10, 100, 100, 100), "Fetch OBBs"))
-                {
-                    GooglePlayDownloader.FetchOBB();
-                    Application.LoadLevel("Volcano");
-                }
+					GooglePlayDownloader.FetchOBB();
 		}
 
 	}

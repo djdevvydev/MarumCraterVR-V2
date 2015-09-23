@@ -140,7 +140,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: f0082db35c5d5614f9e8c63a7f86aa4e, type: 2}
       propertyPath: m_bLoop
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: f0082db35c5d5614f9e8c63a7f86aa4e, type: 2}
       propertyPath: m_LocalScale.y
@@ -223,7 +223,7 @@ MonoBehaviour:
   m_bSupportRockchip: 0
   m_ScaleValue: 0
   m_objResize: {fileID: 0}
-  m_bLoop: 0
+  m_bLoop: 1
   m_bAutoPlay: 1
 --- !u!4 &137217740
 Transform:

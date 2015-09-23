@@ -70,8 +70,8 @@ public class CameraFollowPath : MonoBehaviour
                     speed = 5F;
                     transform.position = _currentPointOnPath.Current.position;
 
-                    GetComponent<CustomTangoController>().m_startPosition = _currentPointOnPath.Current.position;
-
+                    //GetComponent<CustomTangoController>().m_startPosition = _currentPointOnPath.Current.position;
+                    
                     cameraMoveAlongPath = false;
                     sightControlScript.scanning = true;
                     //Debug.Log("Reached our point!");
@@ -159,19 +159,21 @@ public class CameraFollowPath : MonoBehaviour
 
     IEnumerator EmpireStateBuilding()
     {
-        yield return new WaitForSeconds(14.0F);
-        
-        while(empStateBuilding.fillAmount < 1)
+        yield return new WaitForSeconds(13.0F);
+        if (SceneManager.instance.audioManager.audioClipIndex == 1)
         {
-            empStateBuilding.fillAmount += (Time.deltaTime * 0.5f);
-            yield return new WaitForEndOfFrame();
-        }
+            while (empStateBuilding.fillAmount < 1)
+            {
+                empStateBuilding.fillAmount += (Time.deltaTime * 0.5f);
+                yield return new WaitForEndOfFrame();
+            }
 
-        yield return new WaitForSeconds(3.0F);
-        while (empStateBuilding.fillAmount > 0)
-        {
-            empStateBuilding.fillAmount -= (Time.deltaTime * 0.5f);
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds(3.0F);
+            while (empStateBuilding.fillAmount > 0)
+            {
+                empStateBuilding.fillAmount -= (Time.deltaTime * 0.5f);
+                yield return new WaitForEndOfFrame();
+            }
         }
     }
 

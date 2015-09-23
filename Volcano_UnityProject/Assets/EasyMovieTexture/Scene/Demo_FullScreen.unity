@@ -184,6 +184,10 @@ Prefab:
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: 80e2a8c30a78c0a40b7649bcc2f253e3, type: 2}
+      propertyPath: m_strFileName
+      value: ed_1024_512kb.mp4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 80e2a8c30a78c0a40b7649bcc2f253e3, type: 2}
   m_RootGameObject: {fileID: 1137904962}

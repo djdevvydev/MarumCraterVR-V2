@@ -56,7 +56,10 @@ public class SceneManager : MonoBehaviour
         //Debug.Log("Play video...wait for 5 seconds");
         yield return new WaitForSeconds(30.0F);
         //Debug.Log("Set Trail Points Active*******************************");
-        videoScreens[audioManager.audioClipIndex].GetComponent<VideoScreen>().trailPoints.SetActive(true);  
+        if(audioManager.audioClipIndex == 0)
+        {
+            videoScreens[audioManager.audioClipIndex].GetComponent<VideoScreen>().trailPoints.SetActive(true);
+        }
     }
 
     public IEnumerator FadeOut(string levelToLoad)

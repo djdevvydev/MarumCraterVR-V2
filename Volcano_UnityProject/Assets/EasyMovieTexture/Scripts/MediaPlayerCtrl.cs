@@ -1,7 +1,12 @@
+
+
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
 using System.Collections;
+
+
+
 
 public class MediaPlayerCtrl : MonoBehaviour {
 	
@@ -22,33 +27,42 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	
 	public VideoReady OnReady;
 	public VideoEnd OnEnd;
-#if UNITY_IPHONE
-
+	#if UNITY_IPHONE
+	
 	private int m_iPauseFrame;
-#endif
+	#endif
+	
+	
+	#if UNITY_ANDROID && !UNITY_EDITOR && UNITY_5
+	[DllImport ("BlueDoveMediaRender")]
+	private static extern void InitNDK();
+	#endif
+	
+	private int m_iAndroidMgrID;
+	
 	
 	
 	public enum MEDIAPLAYER_ERROR
-    {
+	{
 		MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK = 200,
 		MEDIA_ERROR_IO           = -1004,
-        MEDIA_ERROR_MALFORMED    = -1007,
-        MEDIA_ERROR_TIMED_OUT    = -110,
-        MEDIA_ERROR_UNSUPPORTED  = -1010,
-        MEDIA_ERROR_SERVER_DIED  = 100,
-        MEDIA_ERROR_UNKNOWN      = 1
-    }
+		MEDIA_ERROR_MALFORMED    = -1007,
+		MEDIA_ERROR_TIMED_OUT    = -110,
+		MEDIA_ERROR_UNSUPPORTED  = -1010,
+		MEDIA_ERROR_SERVER_DIED  = 100,
+		MEDIA_ERROR_UNKNOWN      = 1
+	}
 	
 	public enum MEDIAPLAYER_STATE
-    {
+	{
 		NOT_READY       = 0,
 		READY           = 1,
-        END     		= 2,
-        PLAYING         = 3,
-        PAUSED          = 4,
-        STOPPED         = 5,
-        ERROR           = 6
-    }
+		END     		= 2,
+		PLAYING         = 3,
+		PAUSED          = 4,
+		STOPPED         = 5,
+		ERROR           = 6
+	}
 	
 	public enum MEDIA_SCALE
 	{
@@ -68,7 +82,9 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	public bool m_bAutoPlay = true;
 	private bool m_bStop = false;
 
-
+	public bool m_bInit = false;
+	
+	
 	
 	void Awake(){
 		
@@ -82,13 +98,13 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		{
 			m_bSupportRockchip = false;
 		}
-
-#if UNITY_IPHONE
+		
+		#if UNITY_IPHONE
 		
 		if(m_TargetMaterial!=null)
 		{
 			Vector2 [] vec2UVs= m_TargetMaterial.GetComponent<MeshFilter>().mesh.uv;
-		
+			
 			for(int i = 0; i < vec2UVs.Length; i++)
 			{
 				vec2UVs[i] = new Vector2(vec2UVs[i].x, 1.0f -vec2UVs[i].y);
@@ -97,31 +113,49 @@ public class MediaPlayerCtrl : MonoBehaviour {
 			m_TargetMaterial.GetComponent<MeshFilter>().mesh.uv = vec2UVs;
 		}
 		
-
-#endif		
+		
+		#endif		
 		
 	}
 	// Use this for initialization
 	void Start () {
+		
+		#if UNITY_ANDROID && !UNITY_EDITOR 
+		
+		#if UNITY_5
+		if( SystemInfo.graphicsMultiThreaded == true)
+			InitNDK();
+		#endif
+		m_iAndroidMgrID = Call_InitNDK();
+		#endif
+		
 		Call_SetUnityActivity();
 		
-
-#if UNITY_ANDROID
+		
+		
+		
+		
+		
+		
+		#if UNITY_ANDROID
 		if (Application.dataPath.Contains(".obb")) {
-
+			
 			Call_SetSplitOBB(true,Application.dataPath);
 		}
 		else
 		{
 			Call_SetSplitOBB(false, null);
 		}
-#endif
+		#endif
+
+		m_bInit = true;
 		
 	}
-
-
+	
+	
 	void OnApplicationQuit()
 	{
+		
 		if( System.IO.Directory.Exists( Application.persistentDataPath + "/Data" ) == true)
 			System.IO.Directory.Delete( Application.persistentDataPath + "/Data", true);
 	}
@@ -136,16 +170,17 @@ public class MediaPlayerCtrl : MonoBehaviour {
 			return;
 		}
 		
+		
 		if(m_bFirst == false)
 		{
-		
+			
 			
 			
 			
 			
 			string strName = m_strFileName.Trim();
 			
-#if UNITY_IPHONE
+			#if UNITY_IPHONE
 			/*if (strName.StartsWith("http",StringComparison.OrdinalIgnoreCase))
 			{
 				StartCoroutine( DownloadStreamingVideoAndLoad(strName) );
@@ -155,8 +190,8 @@ public class MediaPlayerCtrl : MonoBehaviour {
 				Call_Load(strName,0);
 			}
 			
-#endif
-#if UNITY_ANDROID
+			#endif
+			#if UNITY_ANDROID
 			
 			if(m_bSupportRockchip)
 			{
@@ -171,21 +206,21 @@ public class MediaPlayerCtrl : MonoBehaviour {
 					//Call_Load(strName,0);
 					StartCoroutine( CopyStreamingAssetVideoAndLoad(strName));
 				}
-			
+				
 			}
 			else
 			{
 				Call_Load(strName,0);
 			}
-		
-	 		
-#endif
+			
+			
+			#endif
 			Call_SetLooping(m_bLoop);
 			m_bFirst = true;
 			
-		
+			
 		}
-	
+		
 		
 		if(m_CurrentState == MEDIAPLAYER_STATE.PLAYING || m_CurrentState == MEDIAPLAYER_STATE.PAUSED)
 		{
@@ -197,25 +232,25 @@ public class MediaPlayerCtrl : MonoBehaviour {
 				}
 				
 				Resize();
-			
+				
 				if(m_VideoTexture != null)
 				{
 					
 					//Destroy(m_VideoTexture);
-
+					
 					if( m_VideoTextureDummy != null)
 					{
 						Destroy(m_VideoTextureDummy);
 						m_VideoTextureDummy = null;
 					}
-
+					
 					m_VideoTextureDummy = m_VideoTexture;
 					m_VideoTexture = null;
 					
 					
 				}
 				
-#if UNITY_ANDROID
+				#if UNITY_ANDROID
 				if(m_bSupportRockchip)
 				{
 					m_VideoTexture = new Texture2D(Call_GetVideoWidth(),Call_GetVideoHeight(),TextureFormat.RGB565,false);
@@ -227,20 +262,20 @@ public class MediaPlayerCtrl : MonoBehaviour {
 				}
 				
 				m_VideoTexture.filterMode = FilterMode.Bilinear;
-			    m_VideoTexture.wrapMode = TextureWrapMode.Clamp;
+				m_VideoTexture.wrapMode = TextureWrapMode.Clamp;
 				
 				Call_SetUnityTexture(m_VideoTexture.GetNativeTextureID());
-#endif
+				#endif
 				Call_SetWindowSize();
 				m_bCheckFBO = true;
 				
 			}
 			
-
+			
 			Call_UpdateVideoTexture();
 			
 			
-	
+			
 			m_iCurrentSeekPosition = Call_GetSeekPosition();
 			
 			
@@ -253,37 +288,37 @@ public class MediaPlayerCtrl : MonoBehaviour {
 				{
 					SeekTo(0);
 				}
-	
+				
 			}
 			
 		}
-	
 		
-
+		
+		
 		if(m_CurrentState != Call_GetStatus() )
 		{
 			
 			m_CurrentState = Call_GetStatus();
 			
 			
-
+			
 			if(m_CurrentState == MEDIAPLAYER_STATE.READY)
 			{
-
+				
 				if(OnReady != null)
 					OnReady();
 				
 				if(m_bAutoPlay)
 					Call_Play (0);
-
-
-
+				
+				
+				
 			}
 			else if(m_CurrentState == MEDIAPLAYER_STATE.END)
 			{
 				if(OnEnd != null)
 					OnEnd();
-                SceneManager.instance.videoScreens[0].GetComponent<VideoScreen>().VideoScreenPause();
+				
 				if(m_bLoop == true)
 				{
 					Call_Play(0);
@@ -296,7 +331,7 @@ public class MediaPlayerCtrl : MonoBehaviour {
 			
 		}
 		
-
+		
 	}
 	
 	public void Resize()
@@ -350,51 +385,51 @@ public class MediaPlayerCtrl : MonoBehaviour {
 			if( m_ScaleValue == MEDIA_SCALE.SCALE_X_TO_Y)
 			{
 				m_objResize.transform.localScale 
-				= new Vector3(m_objResize.transform.localScale.x
-						,m_objResize.transform.localScale.x * fRatio
-						,m_objResize.transform.localScale.z);
+					= new Vector3(m_objResize.transform.localScale.x
+					              ,m_objResize.transform.localScale.x * fRatio
+					              ,m_objResize.transform.localScale.z);
 			}
 			else if( m_ScaleValue == MEDIA_SCALE.SCALE_X_TO_Z)
 			{
 				m_objResize.transform.localScale 
-				= new Vector3(m_objResize.transform.localScale.x
-						,m_objResize.transform.localScale.y
-						,m_objResize.transform.localScale.x * fRatio);
+					= new Vector3(m_objResize.transform.localScale.x
+					              ,m_objResize.transform.localScale.y
+					              ,m_objResize.transform.localScale.x * fRatio);
 			}
 			else if( m_ScaleValue == MEDIA_SCALE.SCALE_Y_TO_X)
 			{
 				m_objResize.transform.localScale 
-				= new Vector3(m_objResize.transform.localScale.y / fRatio
-						,m_objResize.transform.localScale.y
-						,m_objResize.transform.localScale.z);
+					= new Vector3(m_objResize.transform.localScale.y / fRatio
+					              ,m_objResize.transform.localScale.y
+					              ,m_objResize.transform.localScale.z);
 			}
 			else if( m_ScaleValue == MEDIA_SCALE.SCALE_Y_TO_Z)
 			{
 				m_objResize.transform.localScale 
-				= new Vector3(m_objResize.transform.localScale.x
-						,m_objResize.transform.localScale.y
-						,m_objResize.transform.localScale.y / fRatio);
+					= new Vector3(m_objResize.transform.localScale.x
+					              ,m_objResize.transform.localScale.y
+					              ,m_objResize.transform.localScale.y / fRatio);
 			}
 			else if( m_ScaleValue == MEDIA_SCALE.SCALE_Z_TO_X)
 			{
 				m_objResize.transform.localScale 
-				= new Vector3(m_objResize.transform.localScale.z * fRatio
-						,m_objResize.transform.localScale.y
-						,m_objResize.transform.localScale.z);
+					= new Vector3(m_objResize.transform.localScale.z * fRatio
+					              ,m_objResize.transform.localScale.y
+					              ,m_objResize.transform.localScale.z);
 			}
 			else if( m_ScaleValue == MEDIA_SCALE.SCALE_Z_TO_Y)
 			{
 				m_objResize.transform.localScale 
-				= new Vector3(m_objResize.transform.localScale.x
-						,m_objResize.transform.localScale.z * fRatio
-						,m_objResize.transform.localScale.z);
+					= new Vector3(m_objResize.transform.localScale.x
+					              ,m_objResize.transform.localScale.z * fRatio
+					              ,m_objResize.transform.localScale.z);
 			}
 			else 
 			{
 				m_objResize.transform.localScale 
-				= new Vector3(m_objResize.transform.localScale.x,m_objResize.transform.localScale.y,m_objResize.transform.localScale.z);
+					= new Vector3(m_objResize.transform.localScale.x,m_objResize.transform.localScale.y,m_objResize.transform.localScale.z);
 			}
-					
+			
 		}
 	}
 	
@@ -407,56 +442,58 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		string strError = "";
 		
 		switch (iCode)
-        {
-            case MEDIAPLAYER_ERROR.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-            	strError = "MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK";
-                break;
-			case MEDIAPLAYER_ERROR.MEDIA_ERROR_SERVER_DIED:
-            	strError = "MEDIA_ERROR_SERVER_DIED";
-                break;
-            case MEDIAPLAYER_ERROR.MEDIA_ERROR_UNKNOWN:
-            	strError = "MEDIA_ERROR_UNKNOWN";
-                break;
-            default:
-            	strError = "Unknown error " + iCode;
-				break;
-        }
+		{
+		case MEDIAPLAYER_ERROR.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
+			strError = "MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK";
+			break;
+		case MEDIAPLAYER_ERROR.MEDIA_ERROR_SERVER_DIED:
+			strError = "MEDIA_ERROR_SERVER_DIED";
+			break;
+		case MEDIAPLAYER_ERROR.MEDIA_ERROR_UNKNOWN:
+			strError = "MEDIA_ERROR_UNKNOWN";
+			break;
+		default:
+			strError = "Unknown error " + iCode;
+			break;
+		}
 		
 		strError += " ";
 		
 		switch (iCodeExtra)
-        {
-            case MEDIAPLAYER_ERROR.MEDIA_ERROR_IO:
-            	strError += "MEDIA_ERROR_IO";
-                break;
-            case MEDIAPLAYER_ERROR.MEDIA_ERROR_MALFORMED:
-            	strError += "MEDIA_ERROR_MALFORMED";
-                break;
-            case MEDIAPLAYER_ERROR.MEDIA_ERROR_TIMED_OUT:
-            	strError += "MEDIA_ERROR_TIMED_OUT";
-                break;
-            case MEDIAPLAYER_ERROR.MEDIA_ERROR_UNSUPPORTED:
-            	strError += "MEDIA_ERROR_UNSUPPORTED";
-                break;
-            default:
-            	strError = "Unknown error " + iCode;
-				break;
-        }
+		{
+		case MEDIAPLAYER_ERROR.MEDIA_ERROR_IO:
+			strError += "MEDIA_ERROR_IO";
+			break;
+		case MEDIAPLAYER_ERROR.MEDIA_ERROR_MALFORMED:
+			strError += "MEDIA_ERROR_MALFORMED";
+			break;
+		case MEDIAPLAYER_ERROR.MEDIA_ERROR_TIMED_OUT:
+			strError += "MEDIA_ERROR_TIMED_OUT";
+			break;
+		case MEDIAPLAYER_ERROR.MEDIA_ERROR_UNSUPPORTED:
+			strError += "MEDIA_ERROR_UNSUPPORTED";
+			break;
+		default:
+			strError = "Unknown error " + iCode;
+			break;
+		}
 		
 		
 		
 		Debug.LogError(strError);
-            
+		
 	}
 	
 	
 	void OnDestroy()
 	{
-#if UNITY_ANDROID
-
+		
+		
+		#if UNITY_ANDROID
+		
 		//Call_Reset();
-	
-#endif
+		
+		#endif
 		Call_UnLoad();
 		
 		if(m_VideoTextureDummy != null)
@@ -469,40 +506,54 @@ public class MediaPlayerCtrl : MonoBehaviour {
 			Destroy(m_VideoTexture);
 		
 		Call_Destroy();
-
-
+		
+		
 	}
 
+	bool m_bPause = false;
+	
 	void OnApplicationPause(bool bPause)
 	{
 		Debug.Log ("ApplicationPause : " +bPause);
 		if(bPause == true)
 		{
-#if UNITY_IPHONE
+
+			if( m_CurrentState == MEDIAPLAYER_STATE.PAUSED)
+			{
+				m_bPause = true;
+			}
+
+			#if UNITY_IPHONE
 			m_iPauseFrame = m_iCurrentSeekPosition;
 			Stop();
-
-
-#else
+			
+			
+			#else
 			Call_Pause();
-#endif
-
-
+			#endif
+			
+			
 		}
 		else
 		{
-#if UNITY_IPHONE
+			#if UNITY_IPHONE
 			m_bStop = false;
 			Call_Play(m_iPauseFrame);
-#else
+			#else
 			Call_RePlay ();
-#endif
+			#endif
 
+			if( m_bPause == true)
+			{
+				Call_Pause();
+				m_bPause = false;
+			}
+			
 		}
 		
 	}
-
-
+	
+	
 	public MEDIAPLAYER_STATE GetCurrentState()
 	{
 		return m_CurrentState;
@@ -536,7 +587,7 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		if(m_CurrentState == MEDIAPLAYER_STATE.PLAYING)
 			Call_Pause();
 		
-	
+		
 		m_bStop = true;
 		m_CurrentState = MEDIAPLAYER_STATE.STOPPED;
 		m_iCurrentSeekPosition = 0;
@@ -555,19 +606,22 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		m_bCheckFBO = false;
 		
 		m_strFileName = strFileName;
+
+		if( m_bInit == false)
+			return;
 		
-#if UNITY_ANDROID
+		#if UNITY_ANDROID
 		
-	
-	
+		
+		
 		//Call_Reset();
 		
-			
-		
-#endif
 		
 		
-#if UNITY_IPHONE
+		#endif
+		
+		
+		#if UNITY_IPHONE
 		/*if (strFileName.StartsWith("http",StringComparison.OrdinalIgnoreCase))
 		{
 			StartCoroutine(DownloadStreamingVideoAndLoad(m_strFileName));
@@ -576,11 +630,11 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		{
 			Call_Load(m_strFileName,0);
 		}
-			
-#endif
 		
-#if UNITY_ANDROID
-			
+		#endif
+		
+		#if UNITY_ANDROID
+		
 		if(m_bSupportRockchip)
 		{
 			Call_SetRockchip(m_bSupportRockchip);
@@ -593,45 +647,54 @@ public class MediaPlayerCtrl : MonoBehaviour {
 			{
 				StartCoroutine( CopyStreamingAssetVideoAndLoad(strFileName));
 			}
-		
+			
 		}
 		else
 		{
 			Call_Load(strFileName,0);
 		}
 		
-	 		
-#endif
+		
+		#endif
 		
 		
 		m_CurrentState = MEDIAPLAYER_STATE.NOT_READY;
 	}
 	
-
+	
 	
 	public void SetVolume(float fVolume)
 	{
-		Call_SetVolume(fVolume);
+		if( m_CurrentState == MEDIAPLAYER_STATE.PLAYING || m_CurrentState == MEDIAPLAYER_STATE.PAUSED  || m_CurrentState == MEDIAPLAYER_STATE.END || m_CurrentState == MEDIAPLAYER_STATE.READY || m_CurrentState == MEDIAPLAYER_STATE.STOPPED)
+			Call_SetVolume(fVolume);
 	}
 	
 	//return milisecond  
 	public int GetSeekPosition()
 	{
-		return m_iCurrentSeekPosition;
+
+		if( m_CurrentState == MEDIAPLAYER_STATE.PLAYING || m_CurrentState == MEDIAPLAYER_STATE.PAUSED  || m_CurrentState == MEDIAPLAYER_STATE.END )
+			return m_iCurrentSeekPosition;
+		else 
+			return 0;
 	}
 	
 	public void SeekTo(int iSeek)
 	{
-		Call_SetSeekPosition(iSeek);
+		if( m_CurrentState == MEDIAPLAYER_STATE.PLAYING || m_CurrentState == MEDIAPLAYER_STATE.PAUSED  || m_CurrentState == MEDIAPLAYER_STATE.END || m_CurrentState == MEDIAPLAYER_STATE.STOPPED)
+			Call_SetSeekPosition(iSeek);
 	}
 	
- 
+	
 	//Gets the duration of the file.
 	//Returns
 	//the duration in milliseconds, if no duration is available (for example, if streaming live content), -1 is returned.
 	public int GetDuration()
 	{
-		return Call_GetDuration();
+		if( m_CurrentState == MEDIAPLAYER_STATE.PLAYING || m_CurrentState == MEDIAPLAYER_STATE.PAUSED  || m_CurrentState == MEDIAPLAYER_STATE.END || m_CurrentState == MEDIAPLAYER_STATE.READY || m_CurrentState == MEDIAPLAYER_STATE.STOPPED)
+			return Call_GetDuration();
+		else 
+			return 0;
 	}
 	
 	//Get update status in buffering a media stream received through progressive HTTP download. 
@@ -640,7 +703,10 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	//the percentage (0-100) of the content that has been buffered or played thus far 
 	public int GetCurrentSeekPercent()
 	{
-		return Call_GetCurrentSeekPercent();
+		if( m_CurrentState == MEDIAPLAYER_STATE.PLAYING || m_CurrentState == MEDIAPLAYER_STATE.PAUSED  || m_CurrentState == MEDIAPLAYER_STATE.END || m_CurrentState == MEDIAPLAYER_STATE.READY)
+			return Call_GetCurrentSeekPercent();
+		else
+			return 0;
 	}
 	
 	public int GetVideoWidth()
@@ -656,51 +722,96 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	public void UnLoad()
 	{
 		m_bCheckFBO = false;
-#if UNITY_ANDROID
-	
+		#if UNITY_ANDROID
+		
 		//Call_Reset();
-#endif
+		#endif
 		Call_UnLoad();
 		
 		m_CurrentState = MEDIAPLAYER_STATE.NOT_READY;
-
+		
 	}
 	
 	
 	
-
-
-#if UNITY_ANDROID
-
-    private AndroidJavaObject javaObj = null;
-
-    private AndroidJavaObject GetJavaObject()
-    {
-        if (javaObj == null)
-        {
-            javaObj = new AndroidJavaObject("com.EasyMovieTexture.EasyMovieTexture");
-        }
-
-        return javaObj;
-    }
-
-   
-
-  
+	
+	#if !UNITY_EDITOR
+	#if UNITY_ANDROID
+	
+	private AndroidJavaObject javaObj = null;
+	
+	private AndroidJavaObject GetJavaObject()
+	{
+		if (javaObj == null)
+		{
+			javaObj = new AndroidJavaObject("com.EasyMovieTexture.EasyMovieTexture");
+		}
+		
+		return javaObj;
+	}
+	
+	
+	
+	
 	private void Call_Destroy()
 	{
+		#if UNITY_5
+		if( SystemInfo.graphicsMultiThreaded == true)
+		{
+			GL.IssuePluginEvent(5 + m_iAndroidMgrID * 10 + 7000);
+		}
+		else
+		{
+			GetJavaObject().Call("Destroy");
+		}
+		#else
 		GetJavaObject().Call("Destroy");
+		#endif
+		
+		
 	}
 	
 	
 	private void Call_UnLoad()
 	{
+		#if UNITY_5
+		if( SystemInfo.graphicsMultiThreaded == true)
+		{
+			GL.IssuePluginEvent(4 + m_iAndroidMgrID * 10 + 7000);
+		}
+		else
+		{
+			GetJavaObject().Call("UnLoad");
+		}
+		#else
 		GetJavaObject().Call("UnLoad");
+		#endif
+		
+		
 	}
 	
 	private bool Call_Load(string strFileName, int iSeek)
 	{
-		return GetJavaObject().Call<bool>("Load", strFileName,iSeek);
+		#if UNITY_5
+		if( SystemInfo.graphicsMultiThreaded == true)
+		{
+			GetJavaObject().Call("NDK_SetFileName", strFileName);
+			GL.IssuePluginEvent(1+ m_iAndroidMgrID * 10 + 7000);
+			Call_SetNotReady();
+			
+			return true;
+		}
+		else
+		{
+			GetJavaObject().Call("NDK_SetFileName", strFileName);
+			return GetJavaObject().Call<bool>("Load");
+		}
+		#else
+		GetJavaObject().Call("NDK_SetFileName", strFileName);
+		return GetJavaObject().Call<bool>("Load");
+		#endif
+		
+		
 	}
 	
 	private void Call_UpdateVideoTexture()
@@ -724,7 +835,20 @@ public class MediaPlayerCtrl : MonoBehaviour {
 			
 		}
 		
+		#if UNITY_5
+		if( SystemInfo.graphicsMultiThreaded == true)
+		{
+			GL.IssuePluginEvent(3 + m_iAndroidMgrID * 10 + 7000);
+		}
+		else
+		{
+			GetJavaObject().Call("UpdateVideoTexture");
+		}
+		#else
 		GetJavaObject().Call("UpdateVideoTexture");
+		#endif
+		
+		
 	}
 	
 	private void Call_SetVolume(float fVolume)
@@ -767,7 +891,11 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		GetJavaObject().Call("Pause");
 	}
 	
-
+	private int Call_InitNDK()
+	{
+		return GetJavaObject().Call<int>("InitNative",GetJavaObject());
+	}
+	
 	private int Call_GetVideoWidth()
 	{
 		return GetJavaObject().Call<int>("GetVideoWidth");
@@ -777,7 +905,7 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	{
 		return GetJavaObject().Call<int>("GetVideoHeight");
 	}
-		
+	
 	private bool Call_IsUpdateFrame()
 	{
 		return GetJavaObject().Call<bool>("IsUpdateFrame");
@@ -790,7 +918,19 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	
 	private void Call_SetWindowSize()
 	{
+		
+		#if UNITY_5
+		if( SystemInfo.graphicsMultiThreaded == true)
+		{
+			GL.IssuePluginEvent(2 + m_iAndroidMgrID * 10 + 7000);
+		}
+		else
+		{
+			GetJavaObject().Call("SetWindowSize");
+		}
+		#else
 		GetJavaObject().Call("SetWindowSize");
+		#endif
 	}
 	
 	private void Call_SetLooping(bool bLoop)
@@ -818,7 +958,7 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	{
 		return GetJavaObject().Call<int>("GetError");
 	}
-
+	
 	private void Call_SetSplitOBB(bool bValue, string strOBBName)
 	{
 		GetJavaObject().Call("SetSplitOBB",bValue,strOBBName);
@@ -830,87 +970,111 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	}
 	
 	
-	 private void Call_SetUnityActivity()
-    {
-        AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject jo = jc.GetStatic<AndroidJavaObject>("currentActivity");
-        GetJavaObject().Call("SetUnityActivity", jo);
-    }
+	private void Call_SetUnityActivity()
+	{
+		AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+		AndroidJavaObject jo = jc.GetStatic<AndroidJavaObject>("currentActivity");
+		GetJavaObject().Call("SetUnityActivity", jo);
+		
+		#if UNITY_5
+		if( SystemInfo.graphicsMultiThreaded == true)
+		{
+			GL.IssuePluginEvent(0 + m_iAndroidMgrID * 10 + 7000);
+		}
+		else
+		{
+			Call_InitJniManager();
+		}
+		#else
+		Call_InitJniManager();
+		#endif
+		
+	}
+	
+	private void Call_SetNotReady()
+	{
+		GetJavaObject().Call("SetNotReady");
+	}
+	
+	private void Call_InitJniManager()
+	{
+		GetJavaObject().Call("InitJniManager");
+	}
 	
 	private MEDIAPLAYER_STATE Call_GetStatus()
 	{
 		return (MEDIAPLAYER_STATE)GetJavaObject().Call<int>("GetStatus");
 	}
-    
-    
 	
-#elif UNITY_IPHONE
+	
+	
+	#elif UNITY_IPHONE
 	[DllImport("__Internal")]
 	private static extern int VideoPlayerPluginCreateInstance();
 	[DllImport("__Internal")]
 	private static extern void VideoPlayerPluginDestroyInstance(int iID);
 	[DllImport("__Internal")]
-    private static extern bool VideoPlayerPluginCanOutputToTexture(string videoURL);
+	private static extern bool VideoPlayerPluginCanOutputToTexture(string videoURL);
 	[DllImport("__Internal")]
-    private static extern void VideoPlayerPluginSetLoop(int iID, bool bLoop);
+	private static extern void VideoPlayerPluginSetLoop(int iID, bool bLoop);
 	[DllImport("__Internal")]
-    private static extern void VideoPlayerPluginSetVolume(int iID, float fVolume);
-    [DllImport("__Internal")]
-    private static extern bool VideoPlayerPluginPlayerReady(int iID);
-    [DllImport("__Internal")]
-    private static extern float VideoPlayerPluginDurationSeconds(int iID);
-    [DllImport("__Internal")]
-    private static extern void VideoPlayerPluginExtents(int iID,ref int width, ref int height);
-    [DllImport("__Internal")]
-    private static extern IntPtr VideoPlayerPluginCurFrameTexture(int iID);
+	private static extern void VideoPlayerPluginSetVolume(int iID, float fVolume);
 	[DllImport("__Internal")]
-    private static extern void VideoPlayerPluginLoadVideo(int iID,string videoURL);
-    [DllImport("__Internal")]
-    private static extern void VideoPlayerPluginPlayVideo(int iID);
-    [DllImport("__Internal")]
-    private static extern void VideoPlayerPluginPauseVideo(int iID);
-    [DllImport("__Internal")]
-    private static extern void VideoPlayerPluginResumeVideo(int iID);
-    [DllImport("__Internal")]
-    private static extern void VideoPlayerPluginRewindVideo(int iID);
-    [DllImport("__Internal")]
-    private static extern void VideoPlayerPluginSeekToVideo(int iID,float time);
+	private static extern bool VideoPlayerPluginPlayerReady(int iID);
 	[DllImport("__Internal")]
-    private static extern float VideoPlayerPluginCurTimeSeconds(int iID);
-    [DllImport("__Internal")]
-    private static extern bool VideoPlayerPluginIsPlaying(int iID);
-    [DllImport("__Internal")]
-    private static extern void VideoPlayerPluginStopVideo(int iID);
+	private static extern float VideoPlayerPluginDurationSeconds(int iID);
+	[DllImport("__Internal")]
+	private static extern void VideoPlayerPluginExtents(int iID,ref int width, ref int height);
+	[DllImport("__Internal")]
+	private static extern IntPtr VideoPlayerPluginCurFrameTexture(int iID);
+	[DllImport("__Internal")]
+	private static extern void VideoPlayerPluginLoadVideo(int iID,string videoURL);
+	[DllImport("__Internal")]
+	private static extern void VideoPlayerPluginPlayVideo(int iID);
+	[DllImport("__Internal")]
+	private static extern void VideoPlayerPluginPauseVideo(int iID);
+	[DllImport("__Internal")]
+	private static extern void VideoPlayerPluginResumeVideo(int iID);
+	[DllImport("__Internal")]
+	private static extern void VideoPlayerPluginRewindVideo(int iID);
+	[DllImport("__Internal")]
+	private static extern void VideoPlayerPluginSeekToVideo(int iID,float time);
+	[DllImport("__Internal")]
+	private static extern float VideoPlayerPluginCurTimeSeconds(int iID);
+	[DllImport("__Internal")]
+	private static extern bool VideoPlayerPluginIsPlaying(int iID);
+	[DllImport("__Internal")]
+	private static extern void VideoPlayerPluginStopVideo(int iID);
 	[DllImport("__Internal")]
 	private static extern bool VideoPlayerPluginFinish(int iID);
 	[DllImport("__Internal")]
 	private static extern void VideoPlayerPluginSetTexture(int iID,int iTextureID);
-
-
-
 	
-
+	
+	
+	
+	
 	int m_iID = -1;
 	/// <summary>
-    /// ???????????????true???????    /// </summary>
-    public bool ready
-    {
-        get
-        {
-            return VideoPlayerPluginPlayerReady(m_iID);
-        }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public float duration
-    {
-        get
-        {
-            return VideoPlayerPluginDurationSeconds(m_iID);
-        }
-    }
+	/// ???????????????true???????    /// </summary>
+	public bool ready
+	{
+		get
+		{
+			return VideoPlayerPluginPlayerReady(m_iID);
+		}
+	}
+	
+	/// <summary>
+	/// 
+	/// </summary>
+	public float duration
+	{
+		get
+		{
+			return VideoPlayerPluginDurationSeconds(m_iID);
+		}
+	}
 	
 	
 	public float currentTime
@@ -921,46 +1085,46 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		}
 	}
 	
-
-    public bool isPlaying
-    {
-        get
-        {
-            return VideoPlayerPluginIsPlaying(m_iID);
-        }
-    }
-    public Vector2 videoSize
-    {
-        get
-        {
-            int width = 0, height = 0;
-            VideoPlayerPluginExtents(m_iID,ref width, ref height);
-            return new Vector2(width, height);
-        }
-    }
+	
+	public bool isPlaying
+	{
+		get
+		{
+			return VideoPlayerPluginIsPlaying(m_iID);
+		}
+	}
+	public Vector2 videoSize
+	{
+		get
+		{
+			int width = 0, height = 0;
+			VideoPlayerPluginExtents(m_iID,ref width, ref height);
+			return new Vector2(width, height);
+		}
+	}
 	
 	private Texture2D _videoTexture;
 	
 	public Texture2D videoTexture
-    {
-        get
-        {
+	{
+		get
+		{
 			IntPtr nativeTex = ready ? VideoPlayerPluginCurFrameTexture(m_iID) : (IntPtr)0;
-
-
+			
+			
 			if (nativeTex != (IntPtr)0)
-            {
-                if (_videoTexture == null)
-                {
-                    _videoTexture = Texture2D.CreateExternalTexture((int)videoSize.x, (int)videoSize.y, TextureFormat.RGBA32,
-                        false, false, (IntPtr)nativeTex);
-                    _videoTexture.filterMode = FilterMode.Bilinear;
-                    _videoTexture.wrapMode = TextureWrapMode.Clamp;
-                }
+			{
+				if (_videoTexture == null)
+				{
+					_videoTexture = Texture2D.CreateExternalTexture((int)videoSize.x, (int)videoSize.y, TextureFormat.RGBA32,
+					                                                false, false, (IntPtr)nativeTex);
+					_videoTexture.filterMode = FilterMode.Bilinear;
+					_videoTexture.wrapMode = TextureWrapMode.Clamp;
+				}
 				
-                _videoTexture.UpdateExternalTexture((IntPtr)nativeTex);
-            }
-           /* else
+				_videoTexture.UpdateExternalTexture((IntPtr)nativeTex);
+			}
+			/* else
             {
 				if(_videoTexture != null)
 				{
@@ -969,10 +1133,10 @@ public class MediaPlayerCtrl : MonoBehaviour {
 				
                 _videoTexture = null;
             }*/
-
-            return _videoTexture;
-        }
-    }
+			
+			return _videoTexture;
+		}
+	}
 	
 	private void Call_Destroy()
 	{
@@ -988,20 +1152,20 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	
 	private void Call_UnLoad()
 	{
-
+		
 		VideoPlayerPluginStopVideo(m_iID);
 	}
 	
 	private bool Call_Load(string strFileName, int iSeek)
 	{
-
+		
 		if(_videoTexture != null)
 		{
 			Destroy(_videoTexture);
 		}
 		
 		_videoTexture = null;
-
+		
 		if (VideoPlayerPluginCanOutputToTexture(strFileName))
 		{
 			VideoPlayerPluginLoadVideo(m_iID,strFileName);	
@@ -1024,12 +1188,16 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		
 		if( m_CurrentState == MEDIAPLAYER_STATE.PLAYING || m_CurrentState == MEDIAPLAYER_STATE.PAUSED)
 		{
+
+			if( videoTexture == null)
+				return;
+
 			if(m_TargetMaterial)
-				m_TargetMaterial.GetComponent<MeshRenderer>().material.mainTexture = _videoTexture;
+				m_TargetMaterial.GetComponent<MeshRenderer>().material.mainTexture = videoTexture;
 			
 			m_VideoTexture = videoTexture;
 		}
-
+		
 		/*if(m_TargetMaterial)
 		{
 			if(m_TargetMaterial.GetComponent<MeshRenderer>().material.mainTexture != m_VideoTexture)
@@ -1042,7 +1210,7 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		IntPtr nativeTex = ready ? VideoPlayerPluginCurFrameTexture(m_iID) : (IntPtr)0;
 		*/
 		
-
+		
 		
 		
 	}
@@ -1077,20 +1245,20 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		{
 			if( m_CurrentState != MEDIAPLAYER_STATE.READY)
 				VideoPlayerPluginSeekToVideo(m_iID,fSeek);
-
+			
 			VideoPlayerPluginPlayVideo(m_iID);
 		}
 		
 		
 		if( m_CurrentState == MEDIAPLAYER_STATE.STOPPED)
 			m_CurrentState = MEDIAPLAYER_STATE.PLAYING;
-			
+		
 		
 	}
 	
 	private void Call_Reset()
 	{
-
+		
 	}
 	
 	private void Call_Stop()
@@ -1108,7 +1276,7 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	{
 		m_CurrentState = MEDIAPLAYER_STATE.PAUSED;
 		VideoPlayerPluginPauseVideo(m_iID);
-
+		
 	}
 	
 	private int Call_GetVideoWidth()
@@ -1138,9 +1306,9 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	
 	
 	public void Call_SetUnityActivity()
-    {
-        m_iID = VideoPlayerPluginCreateInstance();
-    }
+	{
+		m_iID = VideoPlayerPluginCreateInstance();
+	}
 	
 	private int Call_GetError()
 	{
@@ -1169,7 +1337,7 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		{
 			return MEDIAPLAYER_STATE.END;
 		}
-
+		
 		if( m_CurrentState == MEDIAPLAYER_STATE.PAUSED || m_CurrentState == MEDIAPLAYER_STATE.STOPPED)
 		{
 			return m_CurrentState;
@@ -1186,18 +1354,19 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		
 		return m_CurrentState;
 	}
-#else
-
-  
+	#endif
+	#else
+	
+	
 	
 	private void Call_Destroy()
 	{
-
+		
 	}
 	
 	private void Call_UnLoad()
 	{
-
+		
 	}
 	
 	private bool Call_Load(string strFileName, int iSeek)
@@ -1209,17 +1378,17 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	
 	private void Call_UpdateVideoTexture()
 	{
-
+		
 	}
 	
 	private void Call_SetVolume(float fVolume)
 	{
-
+		
 	}
 	
 	private void Call_SetSeekPosition(int iSeek)
 	{
-	
+		
 	}
 	
 	private int Call_GetSeekPosition()
@@ -1229,27 +1398,27 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	
 	private void Call_Play(int iSeek)
 	{
-
+		
 	}
 	
 	private void Call_Reset()
 	{
-
+		
 	}
 	
 	private void Call_Stop()
 	{
-
+		
 	}
 	
 	private void Call_RePlay()
 	{
-
+		
 	}
 	
 	private void Call_Pause()
 	{
-
+		
 	}
 	
 	private int Call_GetVideoWidth()
@@ -1264,7 +1433,7 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	
 	private void Call_SetUnityTexture(int iTextureID)
 	{
-	
+		
 	}
 	
 	private void Call_SetWindowSize()
@@ -1283,9 +1452,9 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	}
 	
 	public void Call_SetUnityActivity()
-    {
-        
-    }
+	{
+		
+	}
 	
 	private int Call_GetError()
 	{
@@ -1306,7 +1475,7 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	{
 		return -1;
 	}
-
+	
 	private void Call_SetSplitOBB(bool bValue, string strOBBName)
 	{
 	}
@@ -1315,8 +1484,8 @@ public class MediaPlayerCtrl : MonoBehaviour {
 	{
 		return (MEDIAPLAYER_STATE)0;
 	}
-
-#endif // !UNITY_EDITOR
+	
+	#endif // !UNITY_EDITOR
 	
 	
 	
@@ -1333,13 +1502,13 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		
 		if(string.IsNullOrEmpty(www.error))
 		{
-
+			
 			if( System.IO.Directory.Exists( Application.persistentDataPath + "/Data") == false)
 				System.IO.Directory.CreateDirectory( Application.persistentDataPath + "/Data");
-
+			
 			string write_path = Application.persistentDataPath + "/Data" + strURL.Substring(strURL.LastIndexOf("/"));
 			
-		/*	if(System.IO.File.Exists(write_path) == true)
+			/*	if(System.IO.File.Exists(write_path) == true)
 			{
 				Debug.Log("Delete : " + write_path);
 				System.IO.File.Delete(write_path);
@@ -1369,7 +1538,7 @@ public class MediaPlayerCtrl : MonoBehaviour {
 		if(System.IO.File.Exists(write_path) == false)
 		{
 			Debug.Log ("CopyStreamingAssetVideoAndLoad : " + strURL);
-		
+			
 			WWW www = new WWW( Application.streamingAssetsPath +"/"+ strURL);
 			
 			yield return www;

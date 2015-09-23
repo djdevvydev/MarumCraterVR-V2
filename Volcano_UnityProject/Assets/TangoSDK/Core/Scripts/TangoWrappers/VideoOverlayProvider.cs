@@ -63,8 +63,11 @@ namespace Tango
                           TextureFormat format, bool mipmap)
         {
             m_videoOverlayTextureY = new Texture2D(yPlaneWidth, yPlaneHeight, format, mipmap);
+            m_videoOverlayTextureY.filterMode = FilterMode.Point;
             m_videoOverlayTextureCb = new Texture2D(uvPlaneWidth, uvPlaneHeight, format, mipmap);
+            m_videoOverlayTextureCb.filterMode = FilterMode.Point;
             m_videoOverlayTextureCr = new Texture2D(uvPlaneWidth, uvPlaneHeight, format, mipmap);
+            m_videoOverlayTextureCr.filterMode = FilterMode.Point;
         }
 
         /// <summary>
@@ -96,7 +99,7 @@ namespace Tango
         public delegate void TangoService_onUnityFrameAvailable(IntPtr callbackContext, Tango.TangoEnums.TangoCameraId cameraId);
         
         private static readonly string CLASS_NAME = "VideoOverlayProvider";
-        private static IntPtr callbackContext;
+        private static IntPtr callbackContext = IntPtr.Zero;
         
         /// <summary>
         /// Connects the texture.

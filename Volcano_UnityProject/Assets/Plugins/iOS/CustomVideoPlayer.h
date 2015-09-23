@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _TRAMPOLINE_CUSTOM_UNITY_VIDEOPLAYER_H_
+#define _TRAMPOLINE_CUSTOM_UNITY_VIDEOPLAYER_H_
 
 #import <CoreMedia/CMTime.h>
 
@@ -18,7 +19,7 @@
 {
     id<CustomVideoPlayerDelegate> delegate;
 }
-@property (nonatomic, retain) id delegate;
+@property (nonatomic, assign) id delegate;
 
 + (BOOL)CanPlayToTexture:(NSURL*)url;
 
@@ -47,3 +48,7 @@
 - (CGSize)videoSize;
 - (void)setTextureID:(intptr_t)id;
 @end
+
+
+
+#endif // _TRAMPOLINE_UNITY_VIDEOPLAYER_H_

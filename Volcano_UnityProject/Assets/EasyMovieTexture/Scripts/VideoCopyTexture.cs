@@ -14,10 +14,18 @@ public class VideoCopyTexture : MonoBehaviour {
 		
 		if(m_srcVideo != null)
 		{
-			if(transform.GetComponent<MeshRenderer>().material.mainTexture != m_srcVideo.GetVideoTexture())
+			if(m_srcVideo.GetCurrentState() == MediaPlayerCtrl.MEDIAPLAYER_STATE.PAUSED || m_srcVideo.GetCurrentState() == MediaPlayerCtrl.MEDIAPLAYER_STATE.PLAYING)
 			{
-				transform.GetComponent<MeshRenderer>().material.mainTexture = m_srcVideo.GetVideoTexture();
+				if(m_srcVideo.GetVideoTexture() != null  )
+				{
+					if(transform.GetComponent<MeshRenderer>().material.mainTexture != m_srcVideo.GetVideoTexture())
+					{
+						transform.GetComponent<MeshRenderer>().material.mainTexture = m_srcVideo.GetVideoTexture();
+					}
+				}
 			}
+
+
 		}
 	
 	}

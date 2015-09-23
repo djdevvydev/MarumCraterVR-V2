@@ -1,28 +1,77 @@
 fileFormatVersion: 2
 guid: 98a0f2d73f9114248bd020286be6124f
 ModelImporter:
-  serializedVersion: 16
+  serializedVersion: 18
   fileIDToRecycleName:
     100000: COL
     100002: //RootNode
     100004: polySurface1
     100006: polySurface2
+    100008: polySurface3
+    100010: Collision
+    100012: Volcano_GEO
+    100014: Volcano_GEO_MeshPart0
+    100016: Volcano_GEO_MeshPart1
+    100018: Volcano_GEO_MeshPart2
+    100020: Volcano_GEO_MeshPart3
+    100022: Collision_High_Rez
+    100024: Volcano_Other_Collision
+    100026: Volcano_Path_Collision
+    100028: Volcano_Outer_Collision
     400000: COL
     400002: //RootNode
     400004: polySurface1
     400006: polySurface2
+    400008: polySurface3
+    400010: Collision
+    400012: Volcano_GEO
+    400014: Volcano_GEO_MeshPart0
+    400016: Volcano_GEO_MeshPart1
+    400018: Volcano_GEO_MeshPart2
+    400020: Volcano_GEO_MeshPart3
+    400022: Collision_High_Rez
+    400024: Volcano_Other_Collision
+    400026: Volcano_Path_Collision
+    400028: Volcano_Outer_Collision
     2300000: COL
     2300002: polySurface1
     2300004: polySurface2
+    2300006: polySurface3
+    2300008: Volcano_GEO_MeshPart0
+    2300010: Volcano_GEO_MeshPart1
+    2300012: Volcano_GEO_MeshPart2
+    2300014: Volcano_GEO_MeshPart3
+    2300016: Collision_High_Rez
+    2300018: Volcano_Other_Collision
+    2300020: Volcano_Path_Collision
+    2300022: Volcano_Outer_Collision
     3300000: COL
     3300002: polySurface1
     3300004: polySurface2
+    3300006: polySurface3
+    3300008: Volcano_GEO_MeshPart0
+    3300010: Volcano_GEO_MeshPart1
+    3300012: Volcano_GEO_MeshPart2
+    3300014: Volcano_GEO_MeshPart3
+    3300016: Collision_High_Rez
+    3300018: Volcano_Other_Collision
+    3300020: Volcano_Path_Collision
+    3300022: Volcano_Outer_Collision
     4300000: COL
     4300002: polySurface1
     4300004: polySurface2
+    4300006: polySurface3
+    4300008: Volcano_GEO_MeshPart0
+    4300010: Volcano_GEO_MeshPart1
+    4300012: Volcano_GEO_MeshPart2
+    4300014: Volcano_GEO_MeshPart3
+    4300016: Collision_High_Rez
+    4300018: Volcano_Path_Collision
+    4300020: Volcano_Other_Collision
+    4300022: Volcano_Outer_Collision
     9500000: //RootNode
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 1
     materialSearch: 1
   animations:
@@ -30,6 +79,10 @@ ModelImporter:
     bakeSimulation: 0
     optimizeGameObjects: 0
     motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
     animationCompression: 1
     animationRotationError: .5
     animationPositionError: .5
@@ -48,11 +101,13 @@ ModelImporter:
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 0
+    keepQuads: 0
     weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
+    useFileScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     splitTangentsAcrossUV: 1
@@ -72,6 +127,8 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   additionalBone: 0
   userData: 
+  assetBundleName: 
+  assetBundleVariant: 
