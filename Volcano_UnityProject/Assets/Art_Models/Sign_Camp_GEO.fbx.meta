@@ -1,0 +1,181 @@
+fileFormatVersion: 2
+guid: 0925f420dd8c0914796fcae19b04c079
+timeCreated: 1441723150
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: arrow
+    100002: group1
+    100004: group2
+    100006: group4
+    100008: sign
+    100010: sign 1
+    100012: //RootNode
+    100014: Sign_Grp_Camp
+    100016: Structure
+    100018: woodBoard_
+    100020: woodBoard_ 1
+    100022: woodBoard_1
+    100024: woodBoard_10
+    100026: woodBoard_11
+    100028: woodBoard_12
+    100030: woodBoard_13
+    100032: woodBoard_2
+    100034: woodBoard_3
+    100036: woodBoard_4
+    100038: woodBoard_4 1
+    100040: woodBoard_5
+    100042: woodBoard_5 1
+    100044: woodBoard_6
+    100046: woodBoard_6 1
+    100048: woodBoard_7
+    100050: woodBoard_8
+    100052: woodBoard_9
+    400000: arrow
+    400002: group1
+    400004: group2
+    400006: group4
+    400008: sign
+    400010: sign 1
+    400012: //RootNode
+    400014: Sign_Grp_Camp
+    400016: Structure
+    400018: woodBoard_
+    400020: woodBoard_ 1
+    400022: woodBoard_1
+    400024: woodBoard_10
+    400026: woodBoard_11
+    400028: woodBoard_12
+    400030: woodBoard_13
+    400032: woodBoard_2
+    400034: woodBoard_3
+    400036: woodBoard_4
+    400038: woodBoard_4 1
+    400040: woodBoard_5
+    400042: woodBoard_5 1
+    400044: woodBoard_6
+    400046: woodBoard_6 1
+    400048: woodBoard_7
+    400050: woodBoard_8
+    400052: woodBoard_9
+    2300000: sign 1
+    2300002: woodBoard_
+    2300004: woodBoard_ 1
+    2300006: woodBoard_1
+    2300008: woodBoard_10
+    2300010: woodBoard_11
+    2300012: woodBoard_12
+    2300014: woodBoard_13
+    2300016: woodBoard_2
+    2300018: woodBoard_3
+    2300020: woodBoard_4
+    2300022: woodBoard_4 1
+    2300024: woodBoard_5
+    2300026: woodBoard_5 1
+    2300028: woodBoard_6
+    2300030: woodBoard_6 1
+    2300032: woodBoard_7
+    2300034: woodBoard_8
+    2300036: woodBoard_9
+    3300000: sign 1
+    3300002: woodBoard_
+    3300004: woodBoard_ 1
+    3300006: woodBoard_1
+    3300008: woodBoard_10
+    3300010: woodBoard_11
+    3300012: woodBoard_12
+    3300014: woodBoard_13
+    3300016: woodBoard_2
+    3300018: woodBoard_3
+    3300020: woodBoard_4
+    3300022: woodBoard_4 1
+    3300024: woodBoard_5
+    3300026: woodBoard_5 1
+    3300028: woodBoard_6
+    3300030: woodBoard_6 1
+    3300032: woodBoard_7
+    3300034: woodBoard_8
+    3300036: woodBoard_9
+    4300000: sign
+    4300002: woodBoard_9
+    4300004: woodBoard_7
+    4300006: woodBoard_8
+    4300008: woodBoard_1
+    4300010: woodBoard_2
+    4300012: woodBoard_3
+    4300014: woodBoard_
+    4300016: woodBoard_4
+    4300018: woodBoard_5
+    4300020: woodBoard_6
+    4300022: woodBoard_12
+    4300024: woodBoard_13
+    4300026: woodBoard_
+    4300028: woodBoard_4
+    4300030: woodBoard_5
+    4300032: woodBoard_6
+    4300034: woodBoard_11
+    4300036: woodBoard_10
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 1
+    materialSearch: 2
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
