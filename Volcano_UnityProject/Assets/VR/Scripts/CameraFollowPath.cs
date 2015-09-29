@@ -11,7 +11,7 @@ public class CameraFollowPath : MonoBehaviour
     public float maxDistanceToPoint = 0.1F;
 
     public int targetPathPoint = 0;
-    public bool cameraMoveAlongPath = false;
+    //public bool cameraMoveAlongPath = false;
 
     public AudioClip windSound;
     public AudioClip lavaSound;
@@ -54,7 +54,7 @@ public class CameraFollowPath : MonoBehaviour
         {
             return;
         }
-        if(cameraMoveAlongPath == true)
+        if(SceneManager.instance.cameraFollowPath == true)
         {
             transform.position = Vector3.MoveTowards(transform.position, _currentPointOnPath.Current.position, Time.deltaTime * speed);
             if (_currentPointOnPath.Current.name == "PathPoint" + targetPathPoint)
@@ -72,7 +72,7 @@ public class CameraFollowPath : MonoBehaviour
 
                     //GetComponent<CustomTangoController>().m_startPosition = _currentPointOnPath.Current.position;
                     
-                    cameraMoveAlongPath = false;
+                    SceneManager.instance.cameraFollowPath = false;
                     sightControlScript.scanning = true;
                     //Debug.Log("Reached our point!");
                     if (SceneManager.instance.videoScreens[SceneManager.instance.audioManager.audioClipIndex] != null)
@@ -125,7 +125,8 @@ public class CameraFollowPath : MonoBehaviour
         else if(SceneManager.instance.audioManager.audioClipIndex == 4)
         {
             environmentNoise.clip = lavaSound;
-            environmentNoise.volume = 1.0F;
+            environmentNoise.Play();
+            environmentNoise.volume = 0.06F;
         }
         else if(SceneManager.instance.audioManager.audioClipIndex > 6)
         {
@@ -139,10 +140,13 @@ public class CameraFollowPath : MonoBehaviour
     {
         yield return new WaitForSeconds(24.0F);
         environmentNoise.clip = rockFallSound;
+        environmentNoise.Play();
         float oldVolume = environmentNoise.volume;
         environmentNoise.volume = 1;
         yield return new WaitForSeconds(10.0F);
+        environmentNoise.Stop();
         environmentNoise.clip = windSound;
+        environmentNoise.Play();
         environmentNoise.volume = oldVolume;
 
     }
@@ -159,7 +163,7 @@ public class CameraFollowPath : MonoBehaviour
 
     IEnumerator EmpireStateBuilding()
     {
-        yield return new WaitForSeconds(13.0F);
+        yield return new WaitForSeconds(12.5F);
         if (SceneManager.instance.audioManager.audioClipIndex == 1)
         {
             while (empStateBuilding.fillAmount < 1)
@@ -168,7 +172,7 @@ public class CameraFollowPath : MonoBehaviour
                 yield return new WaitForEndOfFrame();
             }
 
-            yield return new WaitForSeconds(3.0F);
+            yield return new WaitForSeconds(4.0F);
             while (empStateBuilding.fillAmount > 0)
             {
                 empStateBuilding.fillAmount -= (Time.deltaTime * 0.5f);

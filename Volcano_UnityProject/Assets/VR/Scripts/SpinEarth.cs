@@ -10,12 +10,12 @@ public class SpinEarth : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-	    if(SceneManager.instance.fading == true)
+//	    if(SceneManager.instance.fading == true)
         {
             transform.Translate(Vector3.back * Time.deltaTime * 100, Space.World);
             transform.Rotate(Vector3.up * Time.deltaTime * speed);
         }
-        else
+        //else
         {
             transform.Rotate(Vector3.up * Time.deltaTime * speed);
         }

@@ -69,7 +69,7 @@ public class SightControl : MonoBehaviour
 
                     //cursor.SetActive(false);
 
-                    camFollowPathScript.cameraMoveAlongPath = true; //Start moving
+                    SceneManager.instance.cameraFollowPath = true; //Start moving
 
                     if (SceneManager.instance.videoScreens[SceneManager.instance.audioManager.audioClipIndex] != null)
                     SceneManager.instance.videoScreens[SceneManager.instance.audioManager.audioClipIndex].GetComponent<VideoScreen>().FadeVideoScreen();
@@ -124,7 +124,7 @@ public class SightControl : MonoBehaviour
             //if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 1000.0F))
             {
                 
-                Debug.Log("Hit: " + hit.collider.name);
+//                Debug.Log("Hit: " + hit.collider.name);
                 cursor.SetActive(true);
                 float dist = hit.distance + 0.1F;
                 cursor.transform.position = Camera.main.transform.position + Camera.main.transform.forward * dist;

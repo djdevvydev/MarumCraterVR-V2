@@ -16,19 +16,21 @@ public class VideoScreen : MonoBehaviour {
     public MediaPlayerCtrl mediaControlScr;
 
     Vector3 targetIncreasedScale = new Vector3(22F, 13F, 1.0F);
-    Vector3 targetDecreasedScale = new Vector3(1.0F, 1.0F, 1.0F);
+    Vector3 targetDecreasedScale = new Vector3(0.1F, 0.1F, 0.1F);
 
     float duration = 3.0F;
 
     public void GrowVideoScreen()
     {
-        StartCoroutine("FadeIn");
+        //StartCoroutine("FadeIn");
+        transform.localScale = targetIncreasedScale;
         trailPoints.SetActive(false);
     }
 
     public void FadeVideoScreen()
     {
-        StartCoroutine("FadeOut");
+        VideoScreenPause();
+        gameObject.SetActive(false);
     }
 
     IEnumerator FadeOut()
@@ -81,47 +83,6 @@ public class VideoScreen : MonoBehaviour {
         mediaControlScr.Pause();
         playButton.SetActive(true);
         pauseButton.SetActive(false);
-//        SceneManager.instance.mediaPlayerCtrl.Pause();
-    }
-    /*
-    void OnGUI()
-    {
-        string text;
-        switch (mediaControlScr.GetCurrentState())
-        {
-            case MediaPlayerCtrl.MEDIAPLAYER_STATE.NOT_READY:
-                text = "Not Ready";
-                break;
-            case MediaPlayerCtrl.MEDIAPLAYER_STATE.ERROR:
-                text = "ERROR";
-                break;
-            case MediaPlayerCtrl.MEDIAPLAYER_STATE.PLAYING:
-                text = "PLAYING";
-                break;
-            case MediaPlayerCtrl.MEDIAPLAYER_STATE.STOPPED:
-                text = "STOPPED";
-                break;
-            case MediaPlayerCtrl.MEDIAPLAYER_STATE.END:
-                text = "END";
-                break;
-            case MediaPlayerCtrl.MEDIAPLAYER_STATE.PAUSED:
-                text = "PAUSED";
-                break;
-            default:
-                text = "No State? DEFAULT";
-                break;
-        }
-        
-        GUI.Box(new Rect(Screen.width /2 , Screen.height/2, 200, 30), text);
-        if (GUI.Button(new Rect(Screen.width / 3, Screen.height/3, 100, 100), "Load"))
-        {
-            mediaControlScr.Load("EasyMovieTexture");
-        }
-
-        if (GUI.Button(new Rect(Screen.width / 4, Screen.height / 4, 100, 100), "Play"))
-        {
-            mediaControlScr.Play();
-        }
-     
-    }*/ 
+        //SceneManager.instance.mediaPlayerCtrl.Pause();
+    } 
 }

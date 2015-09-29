@@ -80,6 +80,7 @@ MonoBehaviour:
   m_objResize: {fileID: 100000}
   m_bLoop: 1
   m_bAutoPlay: 1
+  m_bInit: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

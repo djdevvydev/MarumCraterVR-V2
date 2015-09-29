@@ -221,6 +221,7 @@ MonoBehaviour:
   m_objResize: {fileID: 137217736}
   m_bLoop: 1
   m_bAutoPlay: 1
+  m_bInit: 0
 --- !u!4 &137217740
 Transform:
   m_ObjectHideFlags: 0
@@ -334,6 +335,7 @@ MonoBehaviour:
   m_objResize: {fileID: 859227842}
   m_bLoop: 1
   m_bAutoPlay: 1
+  m_bInit: 0
 --- !u!23 &859227844
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -31,6 +31,8 @@ using Tango;
 /// </summary>
 public class TangoDeltaPoseController : MonoBehaviour, ITangoPose
 {
+    [Range(1, 20)]
+    public int movementMultiplier;
     /// <summary>
     /// The change in time since the last pose update.
     /// </summary>
@@ -362,17 +364,21 @@ public class TangoDeltaPoseController : MonoBehaviour, ITangoPose
 
         // Calculate final position and rotation deltas and apply them.
         Vector3 deltaPosition = m_tangoPosition - m_prevTangoPosition;
+        deltaPosition *= movementMultiplier;
         Quaternion deltaRotation = m_tangoRotation * Quaternion.Inverse(m_prevTangoRotation);
 
-        if (m_characterMotion)
+        if (m_characterMotion && SceneManager.instance.readyForMotionTrack)
         {
-            m_characterController.Move(deltaPosition);
+            if (SceneManager.instance.cameraFollowPath != true)
+            {
+                m_characterController.Move(deltaPosition);
+            }
             transform.rotation = deltaRotation * transform.rotation;
         }
-        else
+        //else
         {
-            transform.position = transform.position + deltaPosition;
-            transform.rotation = deltaRotation * transform.rotation;
+            //transform.position = transform.position + deltaPosition;
+            //transform.rotation = deltaRotation * transform.rotation;
         }
     }
 

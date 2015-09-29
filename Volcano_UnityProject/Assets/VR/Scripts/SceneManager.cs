@@ -9,15 +9,19 @@ public class SceneManager : MonoBehaviour
     public bool narrationEnabled = true;
 
     [SerializeField]
-    Image fadeOverlay;
+    //Image fadeOverlay;
 
-    public bool fading;
+    //public bool fading;
 
     GameObject firstTrailSign;
 
     public AudioManager audioManager;
 
     public GameObject[] videoScreens;
+
+    public bool readyForMotionTrack = false;
+
+    public bool cameraFollowPath;
 
     void Awake()
     {
@@ -31,11 +35,6 @@ public class SceneManager : MonoBehaviour
             //If this object is not the singleton of "instance", destroy yourself
             Destroy(gameObject);
         }
-
-        if(fadeOverlay == null)
-        {
-            fadeOverlay = GameObject.Find("FadePanel").GetComponent<Image>();
-        }
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         StartCoroutine("FadeIn");
 
@@ -44,12 +43,8 @@ public class SceneManager : MonoBehaviour
 
     IEnumerator FadeIn()
     {
-        yield return new WaitForSeconds(1);
-        while(fadeOverlay.color.a > 0)
-        {
-            fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, fadeOverlay.color.a - (0.5F*Time.deltaTime));
-            yield return new WaitForEndOfFrame();
-        }
+        yield return new WaitForSeconds(5.0F);
+        readyForMotionTrack = true;
         videoScreens[audioManager.audioClipIndex].SetActive(true);
         videoScreens[audioManager.audioClipIndex].GetComponent<VideoScreen>().GrowVideoScreen();
         //videoScreens[audioManager.audioClipIndex].GetComponent<VideoScreen>().VideoScreenPlay();
@@ -62,18 +57,5 @@ public class SceneManager : MonoBehaviour
         }
     }
 
-    public IEnumerator FadeOut(string levelToLoad)
-    {
-        fading = true;
-        while(fadeOverlay.color.a < 1)
-        {
-            fadeOverlay.color = new Color(fadeOverlay.color.r, fadeOverlay.color.g, fadeOverlay.color.b, fadeOverlay.color.a + (0.5F * Time.deltaTime));
-            yield return new WaitForEndOfFrame();
-        }
-//        Debug.Log("Fade Out Complete");
-        yield return new WaitForSeconds(1);
-        fading = false;
-        Application.LoadLevel(levelToLoad);
-    }
 	
 }
