@@ -9,8 +9,8 @@ PlayerSettings:
   targetDevice: 2
   targetResolution: 0
   accelerometerFrequency: 60
-  companyName: Sam Cossman
-  productName: Marum Crater VR
+  companyName: Qwake
+  productName: Volcano DiVR
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_ShowUnitySplashScreen: 1
@@ -71,7 +71,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 0
-  bundleIdentifier: com.MagneticWest.MuranCraterVR
+  bundleIdentifier: com.MagneticWest.VolcanoDiVR
   bundleVersion: 1.1
   preloadedAssets: []
   metroEnableIndependentInputSource: 0
@@ -80,13 +80,13 @@ PlayerSettings:
   virtualRealitySupported: 1
   productGUID: 1e0f517e732798d45bc1455680f5dc67
   AndroidBundleVersionCode: 3
-  AndroidMinSdkVersion: 21
+  AndroidMinSdkVersion: 19
   AndroidPreferredInstallLocation: 2
   aotOptions: 
   apiCompatibilityLevel: 2
   iPhoneStrippingLevel: 0
   iPhoneScriptCallOptimization: 0
-  ForceInternetPermission: 0
+  ForceInternetPermission: 1
   ForceSDCardPermission: 1
   CreateWallpaper: 0
   APKExpansionFiles: 0
@@ -124,7 +124,7 @@ PlayerSettings:
   AndroidKeystoreName: MarumCraterVR.keystore
   AndroidKeyaliasName: marum crater - tango prototype
   AndroidTVCompatibility: 0
-  AndroidIsGame: 1
+  AndroidIsGame: 0
   androidEnableBanner: 1
   m_AndroidBanners:
   - width: 320

@@ -13,3 +13,5 @@ EditorBuildSettings:
     path: Assets/VR/Volcano.unity
   - enabled: 1
     path: Assets/Scenes/Volcano_Workfile_07.unity
+  - enabled: 1
+    path: Assets/Scenes/Intro Video.unity

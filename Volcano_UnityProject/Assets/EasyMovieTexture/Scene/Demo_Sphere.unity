@@ -181,6 +181,7 @@ MonoBehaviour:
   m_objResize: {fileID: 0}
   m_bLoop: 1
   m_bAutoPlay: 1
+  m_bInit: 0
 --- !u!114 &764680269
 MonoBehaviour:
   m_ObjectHideFlags: 0
