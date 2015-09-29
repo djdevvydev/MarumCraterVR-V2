@@ -26,7 +26,7 @@ public class GooglePlayDownloader
 		using (AndroidJavaClass dl_service = new AndroidJavaClass("com.unity3d.plugin.downloader.UnityDownloaderService"))
 		{
 	    // stuff for LVL -- MODIFY FOR YOUR APPLICATION!
-			dl_service.SetStatic("BASE64_PUBLIC_KEY", "REPLACE THIS WITH YOUR PUBLIC KEY");
+            dl_service.SetStatic("BASE64_PUBLIC_KEY", "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3ZB21R0XNAxieFmTc6xRp6PsUHCd+JbnumH3vY6U71Mnk6vsYS/d9iw9JEYnxCm0OCCIlVOov/VRBlVG0EgVQiZk4OYzTvupEixv5OBTTJmq9yfDiuJuskZSAeRIUWfzH3P+hEuzpX+RXrSQjQ4M+1PqvUmI1qf5Hzhvfm/X0zmAofOsI1VGV1Gz2xH0q99VLpkVeBPIH7FvrRcEOOj51uNehTk6Vd+Hr4r8wqIlqEOW0qWdWxVNtfUJAVyJFFVCzPE792UfYDbk72a6iLGiPr0fgJ4C3zeZsbEIlruahrmb0p7PFmhoaym/RjXRONSMwRCrNLGdnMvpczbZo9QDOQIDAQAB");
 	    // used by the preference obfuscater
 			dl_service.SetStatic("SALT", new byte[]{1, 43, 256-12, 256-1, 54, 98, 256-100, 256-12, 43, 2, 256-8, 256-4, 9, 5, 256-106, 256-108, 256-33, 45, 256-1, 84});
 		}

@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/VR/OBBDL.unity
+    path: Assets/Scenes/Intro Video.unity
   - enabled: 1
     path: Assets/Scenes/Volcano_Workfile_07.unity
